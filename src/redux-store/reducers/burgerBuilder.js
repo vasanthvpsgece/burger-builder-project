@@ -1,5 +1,5 @@
 import * as actionType from '../actions/actionTypes'
-import { updateObject } from '../utilities'
+import { updateObject } from '../../shared/utilities'
 
 const INGREDIENT_PRICE = {
     salad: 0.5,
@@ -11,6 +11,7 @@ const INGREDIENT_PRICE = {
 const initialState = {
     ingredients: null,
     price: 4,
+    buildingBurger: false,
     error: false
 }
 
@@ -23,7 +24,8 @@ const reducer = (state = initialState, action) => {
             const updatedIngObject = updateObject(state.ingredients, newIngredient);
             const updatedStateObject = {
                 ingredients: updatedIngObject,
-                price: state.price + INGREDIENT_PRICE[action.ingredientName]
+                price: state.price + INGREDIENT_PRICE[action.ingredientName],
+                buildingBurger: true
             }
 
             return updateObject(state, updatedStateObject);
@@ -33,14 +35,14 @@ const reducer = (state = initialState, action) => {
             const updatedIngObjectRem = updateObject(state.ingredients, newIngredientRem);
             const updatedStateObjectRem = {
                 ingredients: updatedIngObjectRem,
-                price: state.price - INGREDIENT_PRICE[action.ingredientName]
+                price: state.price - INGREDIENT_PRICE[action.ingredientName],
             }
 
             return updateObject(state, updatedStateObjectRem);
 
         case actionType.SET_INIT_ING:
 
-            return updateObject(state, {ingredients: action.ingredients, error: false})
+            return updateObject(state, {ingredients: action.ingredients, buildingBurger: false, error: false})
             // return({
             //     ...state,
             //     ingredients: action.ingredients,

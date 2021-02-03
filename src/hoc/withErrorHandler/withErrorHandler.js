@@ -9,7 +9,7 @@ const withErrorHandler = (WrappedComponent, axios) => {
             error: null
         }
 
-        componentWillMount() {
+        UNSAFE_componentWillMount() {
             //super(props);
             
             const reqInterceptorTemp = axios.interceptors.request.use(req => {
@@ -19,12 +19,8 @@ const withErrorHandler = (WrappedComponent, axios) => {
 
             const resInterceptorTemp = axios.interceptors.response.use(res => res, 
                 err => {
-                    console.log("interceptor called", err)
                     this.setState({error: err})
-                    console.log("Temp", this.state.error)
                 })
-            
-            console.log("Did Mount", this.state.error, WrappedComponent)
             this.setState({reqInterceptor: reqInterceptorTemp, resInterceptor: resInterceptorTemp});
         }
 
@@ -33,7 +29,6 @@ const withErrorHandler = (WrappedComponent, axios) => {
         // }
 
         componentWillUnmount() {
-            console.log("Will UnMounted", WrappedComponent)
             axios.interceptors.request.eject(this.reqInterceptor);
             axios.interceptors.response.eject(this.resInterceptor);
         }
@@ -43,7 +38,6 @@ const withErrorHandler = (WrappedComponent, axios) => {
         }
 
        render() {
-        console.log("Render", this.state.error, WrappedComponent)
            return(
                 <Aux>
                     <Modal show={this.state.error} modalClicked={this.clicked}>

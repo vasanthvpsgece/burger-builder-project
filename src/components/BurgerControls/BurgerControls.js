@@ -26,7 +26,7 @@ const burgerControls = (props) => {
         <button 
             className={classes.OrderButton} 
             disabled={!props.purchasable}
-            onClick={props.clicked}>Order Now</button>
+            onClick={props.clicked}>{props.isAuthenticated ? "Order" : "Sign Up"}</button>
     </div>
     )
 }

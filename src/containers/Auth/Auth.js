@@ -4,6 +4,8 @@ import Button from '../../components/UI/Button/Button'
 import Spinner from '../../components/UI/Spinner/Spinner'
 import classes from './Auth.module.css'
 import { connect } from 'react-redux'
+import { Redirect } from 'react-router-dom'
+import {checkValidity} from '../../shared/utilities'
 
 import * as actions from '../../redux-store/actions/index'
 
@@ -42,6 +44,12 @@ class Auth extends Component {
         },
         isSignup: true
     }
+
+    componentDidMount() {
+        if(!this.props.buildingBurger && this.props.authRedirectPath !== '/') {
+            this.props.onSetAuthRedirectPath();
+        }
+    }
     
     inputChangeHandler = (event, inputIdentifier) => {
         const updatedControls = {
@@ -49,30 +57,12 @@ class Auth extends Component {
             [inputIdentifier]: {
                 ...this.state.controls[inputIdentifier],
                 value: event.target.value,
-                valid: this.checkValidity(event.target.value, this.state.controls[inputIdentifier].validation),
+                valid: checkValidity(event.target.value, this.state.controls[inputIdentifier].validation),
                 touched: true
             }
         };
 
         this.setState({controls: updatedControls})
-    }
-
-    checkValidity = (value, rules) => {
-        let isValid = false;
-
-        if(rules.required) {
-            isValid = value.trim() !== '';
-        }
-
-        if(rules.minLength) {
-            isValid = value.length >= rules.minLength && isValid;
-        }
-
-        if(rules.maxLength) {
-            isValid = value.length <= rules.maxLength && isValid;
-        }
-
-        return isValid;
     }
 
     submitHandler = (event) => {
@@ -118,8 +108,15 @@ class Auth extends Component {
             errorMessage = <p>{this.props.error.message}</p>
         }
 
+        let authRedirect = null;
+
+        if(this.props.isAuthenticated) {
+            authRedirect = <Redirect to={this.props.authRedirectPath} />
+        }
+
         return(
             <div className={classes.Auth}>
+                {authRedirect}
                 {errorMessage}
                 <form onSubmit={this.submitHandler}>
                     {form}
@@ -136,12 +133,16 @@ class Auth extends Component {
 const mapStateToProps = (state) => {
     return {
         loading: state.auth.loading,
-        error: state.auth.error
+        error: state.auth.error,
+        isAuthenticated: state.auth.token !== null,
+        buildingBurger: state.burgerBuilder.buildingBurger,
+        authRedirectPath: state.auth.authRedirectPath
     }
 }
 const mapDispatchToProps = (dispatch) => {
     return {
-        onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup))
+        onAuth: (email, password, isSignup) => dispatch(actions.auth(email, password, isSignup)),
+        onSetAuthRedirectPath: () => dispatch(actions.setAuthRedirectPath('/'))
     }
 }
 

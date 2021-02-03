@@ -9,7 +9,7 @@ import * as actions from '../../redux-store/actions/index'
 class Orders extends Component {
 
     componentDidMount() {
-        this.props.onFetchOrder();
+        this.props.onFetchOrder(this.props.token, this.props.userId);
         // axios.get('/orders.json')
         // .then(res => {
         //     let fetchedOrders = [];
@@ -45,13 +45,15 @@ class Orders extends Component {
 const mapStateToProps = (state) => {
     return {
         orders: state.burgerOrder.orders,
-        loading: state.burgerOrder.makingRequest
+        loading: state.burgerOrder.makingRequest,
+        token: state.auth.token,
+        userId: state.auth.userId
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onFetchOrder: () => dispatch(actions.fetchOrders())
+        onFetchOrder: (token, userId) => dispatch(actions.fetchOrders(token, userId))
     }
 }
 

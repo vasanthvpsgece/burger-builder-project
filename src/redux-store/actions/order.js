@@ -22,10 +22,11 @@ export const orderPlacingStart = () => {
     }
 }
 
-export const userPlacingOrder = (orderData) => {
+export const userPlacingOrder = (orderData, token) => {
     return dispatch => {
+        
         dispatch(orderPlacingStart());
-        axios.post('/orders.json', orderData)
+        axios.post('/orders.json?auth=' + token, orderData)
             .then(response => {
                                 dispatch(orderSuccess(response.data.name, orderData))
                               })
@@ -61,10 +62,12 @@ export const fetchOrderStart = () => {
     }
 }
 
-export const fetchOrders = () => {
-    return dispatch => {
+export const fetchOrders = (token, userId) => {
+    return (dispatch) => {
         dispatch(fetchOrderStart());
-        axios.get('/orders.json')
+
+        const queryParams = '?auth=' + token + '&orderBy="userId"&equalTo="' + userId + '"';
+        axios.get('/orders.json' + queryParams)
         .then(res => {
             let fetchedOrders = [];
             for(let key in res.data) {
